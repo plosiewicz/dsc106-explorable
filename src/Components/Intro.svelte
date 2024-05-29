@@ -1,18 +1,25 @@
 <script>
 </script>
 
+<style>
+  /* Define a class to add space between paragraphs */
+  .paragraph-separator {
+      margin-bottom: 20px; /* Add margin at the bottom of the paragraph */
+  }
+</style>
+
 <section>
   <p class="body-text">
-    Lorem ipsum dolor sit amet <a href="">random link</a> adipisicing elit. Esse
-    dolor nobis
-    <span class="bold">bold text</span> eius voluptate distinctio odit ut quod illo!
-    Nulla consequatur fugiat quia commodi aspernatur necessitatibus est doloremque
-    quam vitae dolorem. Vitae natus ipsum animi officiis et quis obcaecati in molestiae
-    aperiam, perferendis odio a ipsam nam suscipit laboriosam corporis excepturi
-    quisquam? Ratione delectus repellat error maxime quo beatae ullam, quod
+    With an increasing amount of fast food options in today's society, convenient food options 
+    have seemingly increased. However as a result, our physical well being might be suffering as 
+    a result for increased fast food consumption. In our efforts to explore healthy eating practices,
+    our team has delved into the following <a href="https://www.kaggle.com/datasets/shrutisaxena/food-nutrition-dataset">dataset</a> 
+    which breaks down differnt food categories and their respective nutritional values.
   </p>
-  <p class="body-text">This is a trr</p>
+  <div class = "paragraph-separator"></div>
+  <p class="body-text">
+    Through this project, we hope to help people understand the effects that different macronutrients and 
+    micronutrients have on a person's physical health. By utilizing a variety of visualizations including heatmaps, 
+    line graphs, and bubble charts, we hope to illustrate how your daily deitary choice play a role in your health. 
+  </p>
 </section>
-
-<style>
-</style>

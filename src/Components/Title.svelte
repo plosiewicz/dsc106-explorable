@@ -1,8 +1,8 @@
 <section id="intro">
-  <h1 id="intro-hed">Title Of The Article</h1>
-  <h1 class="intro-sub">Subtitle of the article.</h1>
+  <h1 id="intro-hed">Dietary Exploration</h1>
+  <h1 class="intro-sub">Exploring the various facets of your diet and how it affects your health.</h1>
   <h3 id="intro__date">
-    <a href="https://twitter.com/" target="_blank">Author Name</a>, Month Year
+    <a href="https://twitter.com/" target="_blank">Dawson Tam, Paul Losiewicz, Nadine Marcus</a>, 5/2024
   </h3>
 </section>
 
