@@ -60,7 +60,7 @@
 
   async function loadData() {
   try {
-    data = await d3.csv('/food.csv'); // Updated the path to your CSV file
+    data = await d3.csv('/data/food.csv'); // Updated the path to your CSV file
     console.log('Data loaded successfully:', data);
     // Filter out data entries not belonging to specified categories
     data = data.filter(d => categories.includes(d.Category));
