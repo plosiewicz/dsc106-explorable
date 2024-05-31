@@ -29,18 +29,18 @@
 
   /* Container for heatmap and bar chart */
   .chart-container {
-      display: flex;
-      justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
   }
 
   /* Adjust the size and margins of each chart */
   #heatmap, #bar-chart {
-      width: 50%;
-      height: 600px;
+    width: 50%;
+    height: 600px;
   }
 
   .bar {
-      fill: steelblue;
+    fill: steelblue;
   }
 </style>
 
@@ -56,16 +56,20 @@
 
   let data = [];
   let categories = ['BEEF', 'PORK', 'CEREALS RTE', 'BABYFOOD', 'LAMB', 'SOUP', 'CHICKEN', 'CEREALS', 'FAST FOODS', 'CANDIES', 'TURKEY', 'CAMPBELL SOUP COMPANY', 'BEANS', 'VEAL', "MCDONALD'S", 'CHEESE', 'POTATOES', 'COOKIES', 'ALCOHOLIC BEV', 'OIL'];
-  let nutrients = ['Data.Protein', 'Data.Carbohydrate', 'Data.Fat.Total Lipid', 'Data.Sugar Total', 'Data.Fiber', 'Data.Major Minerals.Sodium', 'Data.Major Minerals.Calcium', 'Data.Vitamins.Vitamin C', 'Data.Vitamins.Vitamin B12', 'Data.Major Minerals.Iron', 'Data.Fat.Saturated Fat', 'Data.Water'];  
-  
-  async function loadData() {
-    data = await d3.csv('/food.csv'); // Update the path to your CSV file
+  let nutrients = ['Data.Protein', 'Data.Carbohydrate', 'Data.Fat.Total Lipid', 'Data.Sugar Total', 'Data.Fiber', 'Data.Major Minerals.Sodium', 'Data.Major Minerals.Calcium', 'Data.Vitamins.Vitamin C', 'Data.Vitamins.Vitamin B12', 'Data.Major Minerals.Iron', 'Data.Fat.Saturated Fat', 'Data.Water'];
 
+  async function loadData() {
+  try {
+    data = await d3.csv('dsc106-explorable/data/food.csv'); // Updated the path to your CSV file
+    console.log('Data loaded successfully:', data);
     // Filter out data entries not belonging to specified categories
     data = data.filter(d => categories.includes(d.Category));
-
     drawHeatmap();
+  } catch (error) {
+    console.error('Error loading data:', error);
   }
+}
+
 
   function drawHeatmap() {
     const margin = { top: 30, right: 30, bottom: 60, left: 60 };
@@ -220,26 +224,27 @@
           .attr('height', d => height - y(parseFloat(d[nutrient])))
           .style('fill', 'steelblue');
 
-      // Calculate the average value for the nutrient in the selected category
-      const categoryAvgValue = d3.mean(topFoods.map(d => +d[nutrient]));
+// Calculate the average value for the nutrient in the selected category
+const categoryAvgValue = d3.mean(topFoods.map(d => +d[nutrient]));
 
-      // Add the red horizontal line representing the average nutrient content
-      svg.append('line')
-          .attr('x1', 0)
-          .attr('x2', width)
-          .attr('y1', y(categoryAvgValue))
-          .attr('y2', y(categoryAvgValue))
-          .attr('stroke', 'red')
-          .attr('stroke-width', 2);
+// Add the red horizontal line representing the average nutrient content
+svg.append('line')
+    .attr('x1', 0)
+    .attr('x2', width)
+    .attr('y1', y(categoryAvgValue))
+    .attr('y2', y(categoryAvgValue))
+    .attr('stroke', 'red')
+    .attr('stroke-width', 2);
 
-      // Add a label for the red horizontal line
-      svg.append('text')
-          .attr('x', width - 5)
-          .attr('y', y(categoryAvgValue) - 10)
-          .attr('text-anchor', 'end')
-          .attr('fill', 'red')
-          .text(`Nutrional Content Avg. Per Category: ${categoryAvgValue.toFixed(2)}`);
-  }
+// Add a label for the red horizontal line
+svg.append('text')
+    .attr('x', width - 5)
+    .attr('y', y(categoryAvgValue) - 10)
+    .attr('text-anchor', 'end')
+    .attr('fill', 'red')
+    .text(`Nutritional Content Avg. Per Category: ${categoryAvgValue.toFixed(2)}`);
+}
 
-  onMount(loadData);
+onMount(loadData);
 </script>
+

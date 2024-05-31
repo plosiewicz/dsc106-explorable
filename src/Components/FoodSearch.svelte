@@ -13,7 +13,7 @@
   const dispatch = createEventDispatcher(); // Create dispatcher
 
   onMount(async () => {
-    const response = await fetch("/food.csv");
+    const response = await fetch("dsc106-explorable/food.csv");
     const data = await response.text();
     foodData = d3.csvParse(data, (d) => ({
       name: d.Description,
