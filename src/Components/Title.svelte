@@ -23,6 +23,8 @@
     max-width: 100%;
     margin: auto;
     color: var(--squid-ink);
+    background-color: #e1cee1;
+
   }
 
   .intro-sub {
@@ -33,6 +35,8 @@
     opacity: 0.75;
     padding: 2rem;
     font-family: var(--font-main);
+    background-color: #d7c8d7;
+
   }
 
   #intro__date {
