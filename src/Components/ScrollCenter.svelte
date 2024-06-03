@@ -48,7 +48,16 @@
   let value;
 
   // Trigger events on scroll
-  $: if (typeof value !== "undefined") target2event[value]();
+  $: {
+    if (typeof value !== "undefined") {
+        const eventFunction = target2event[value];
+        if (typeof eventFunction === "function") {
+            eventFunction();
+        } else {
+            console.error(`No function found for value: ${value}`);
+        }
+    }
+}
 </script>
 
 <h2 class="body-header">What are major components of a good diet?</h2>

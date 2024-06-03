@@ -88,6 +88,16 @@
       console.log("Bottom of the page reached");
     }
   }
+
+  // Add event listener for input event on the search input field
+  function addInputEventListener() {
+    const searchInput = document.querySelector('input[type="text"]');
+    searchInput.addEventListener('input', handleSearch);
+  }
+
+  // Call the function to add the event listener when the component is mounted
+  onMount(addInputEventListener);
+
 </script>
 
 <div class="search-container">
