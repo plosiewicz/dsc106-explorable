@@ -27,9 +27,13 @@
 
   // Handle the search functionality
   function handleSearch() {
+    if (searchQuery == ""){
+      searchResults = [];
+    }
+    else{
     searchResults = foodData.filter((food) =>
-      food.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+      food.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 5);
+    }
   }
 
   // Select a food item to display its nutrients
