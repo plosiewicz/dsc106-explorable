@@ -31,13 +31,15 @@
   /* Container for heatmap and bar chart */
   .chart-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
   }
 
   /* Adjust the size and margins of each chart */
   #heatmap, #bar-chart {
     width: 50%;
     height: 600px;
+    max-width: 800px;
   }
 
   .bar {
@@ -73,17 +75,18 @@
 
 
   function drawHeatmap() {
-    const margin = { top: 30, right: 30, bottom: 60, left: 60 };
-    const width = 800 - margin.left - margin.right;
+    const margin = { top: 30, right: 30, bottom: 100, left: 250 };
+    const containerWidth = document.getElementById('heatmap').clientWidth;
+    const containerHeight = 600; // Assuming a fixed height for the container
+    const width = 800 - margin.right - margin.right;
     const height = 600 - margin.top - margin.bottom;
-
     // Remove any existing SVG
     d3.select('#heatmap').selectAll('*').remove();
 
     const svg = d3.select('#heatmap')
       .append('svg')
       .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
+      .attr('height', height + margin.top + margin.bottom + 2000)
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
