@@ -1,14 +1,15 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount, onDestroy, createEventDispatcher } from "svelte";
   import * as d3 from "d3";
+  import { writable } from 'svelte/store';
   import NutrientChart from "./NutrientChart.svelte";
 
   let foodData = [];
   let searchQuery = "";
   let searchResults = [];
-  let selectedNutrients = {};
-  let selectedIngredients = []; // Array to store selected ingredients
-  let colorScale = d3.scaleOrdinal(d3.schemeCategory10); // Color scale for ingredients
+  let totalNutrients = { calories: 0, protein: 0, fats: 0, carbohydrates: 0 };
+  let selectedIngredients = writable([]); // Initialize as writable store
+  let colorScale = writable(d3.scaleOrdinal(d3.schemeCategory10)); // Color scale for ingredients
 
   const dispatch = createEventDispatcher(); // Create dispatcher
 
@@ -23,16 +24,22 @@
       carbohydrates: +d["Data.Carbohydrate"],
       servingSize: 100, // Assuming the data is in 100g serving
     }));
+    
+    window.addEventListener("scroll", handleScroll);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener("scroll", handleScroll);
   });
 
   // Handle the search functionality
   function handleSearch() {
-    if (searchQuery == ""){
+    if (searchQuery.trim() === "") {
       searchResults = [];
-    }
-    else{
-    searchResults = foodData.filter((food) =>
-      food.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 5);
+    } else {
+      searchResults = foodData.filter((food) =>
+        food.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 5);
     }
   }
 
@@ -50,15 +57,21 @@
     }
 
     // Calculate nutrients considering the quantity
-    selectedNutrients = {
+    const nutrients = {
       calories: food.calories * parsedQuantity / food.servingSize,
       protein: food.protein * parsedQuantity / food.servingSize,
       fats: food.fats * parsedQuantity / food.servingSize,
       carbohydrates: food.carbohydrates * parsedQuantity / food.servingSize,
     };
 
-    // Add selected food with quantity
-    selectedIngredients.push({ name: food.name, quantity: parsedQuantity });
+    // Update total nutrients
+    totalNutrients.calories += nutrients.calories;
+    totalNutrients.protein += nutrients.protein;
+    totalNutrients.fats += nutrients.fats;
+    totalNutrients.carbohydrates += nutrients.carbohydrates;
+
+    // Add selected food with quantity and nutrients
+    selectedIngredients.update(arr => [...arr, { name: food.name, quantity: parsedQuantity, nutrients }]);
 
     // Clear the search bar and results
     searchQuery = "";
@@ -67,14 +80,13 @@
     // Dispatch event to notify NutrientChart of ingredient update
     dispatch("ingredientsUpdated");
   }
-  function showDetailedInfo(result) {
-    const infoId = result.name.split(" ").join("-") + "-info";
-    document.getElementById(infoId).style.display = "block";
-  }
 
-  function hideDetailedInfo(result) {
-    const infoId = result.name.split(" ").join("-") + "-info";
-    document.getElementById(infoId).style.display = "none";
+  // Handle scrolling
+  function handleScroll() {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      // At the bottom of the page
+      console.log("Bottom of the page reached");
+    }
   }
 </script>
 
@@ -87,27 +99,19 @@
   />
   <ul>
     {#each searchResults as result}
-      <li on:click={() => selectFood(result)}
-          on:mouseover={() => showDetailedInfo(result)}
-          on:mouseout={() => hideDetailedInfo(result)}>
+      <li on:click={() => selectFood(result)}>
         <strong>{result.name}</strong><br />
         <span>Calories: {result.calories}, Protein: {result.protein}g, Fats: {result.fats}g, Carbohydrates: {result.carbohydrates}g</span>
-        <div class="detailed-info" id={result.name.split(" ").join("-") + "-info"} style="display:none;">
-          <p>Calories per {result.servingSize}g: {result.calories}</p>
-          <p>Protein per {result.servingSize}g: {result.protein}g</p>
-          <p>Fats per {result.servingSize}g: {result.fats}g</p>
-          <p>Carbohydrates per {result.servingSize}g: {result.carbohydrates}g</p>
-        </div>
       </li>
     {/each}
   </ul>
-  {#if Object.keys(selectedNutrients).length > 0}
+  {#if $selectedIngredients.length > 0}
     <NutrientChart
-      nutrients={selectedNutrients}
-      ingredients={selectedIngredients}
-      {colorScale}
-      on:ingredientsUpdated={() => {}} 
-      />
+      nutrients={totalNutrients}
+      ingredients={$selectedIngredients}
+      colorScale={$colorScale}
+      on:ingredientsUpdated={() => {}}
+    />
   {/if}
 </div>
 
@@ -133,11 +137,5 @@
     padding: 10px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
-  }
-  .detailed-info {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-top: 5px;
   }
 </style>
