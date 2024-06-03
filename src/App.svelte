@@ -23,7 +23,9 @@
   <ScrollCenter />
   <Heatmap />
   <ScrollSide />
-  <FoodSearch />
+  <div class="component food-search">
+    <FoodSearch />
+  </div>
   <LineChart />
   <Conclusion />
   <Resources />
@@ -132,7 +134,7 @@
 
   /* FoodSearch styles */
   .food-search {
-    background-color: #316e9c;
+    background-color: #f5f5f5; /* Changed to light gray */
     padding: 20px;
     border-radius: 8px;
   }
@@ -151,3 +153,4 @@
     border-radius: 8px;
   }
 </style>
+

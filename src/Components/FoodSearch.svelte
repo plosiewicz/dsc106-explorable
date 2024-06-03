@@ -1,15 +1,33 @@
 <script>
-  import { onMount, onDestroy, createEventDispatcher } from "svelte";
-  import * as d3 from "d3";
+  import { onMount, createEventDispatcher } from "svelte";
   import { writable } from 'svelte/store';
+  import * as d3 from "d3"; // Import d3 library
   import NutrientChart from "./NutrientChart.svelte";
 
   let foodData = [];
   let searchQuery = "";
   let searchResults = [];
-  let totalNutrients = { calories: 0, protein: 0, fats: 0, carbohydrates: 0 };
+  let currentPage = 0; // Current page of search results
+  const resultsPerPage = 5; // Number of results to show per page
+
+  let totalNutrients = {
+    calories: 0,
+    protein: 0,
+    fats: 0,
+    carbohydrates: 0,
+    sugar: 0,
+    fiber: 0,
+    sodium: 0,
+    calcium: 0,
+    vitaminC: 0,
+    vitaminB12: 0,
+    iron: 0,
+    saturatedFat: 0,
+    water: 0
+  };
+
   let selectedIngredients = writable([]); // Initialize as writable store
-  let colorScale = writable(d3.scaleOrdinal(d3.schemeCategory10)); // Color scale for ingredients
+  let colorScale = d3.scaleOrdinal(d3.schemeCategory10); // Color scale for ingredients
 
   const dispatch = createEventDispatcher(); // Create dispatcher
 
@@ -22,24 +40,43 @@
       protein: +d["Data.Protein"],
       fats: +d["Data.Fat.Total Lipid"],
       carbohydrates: +d["Data.Carbohydrate"],
+      sugar: +d["Data.Sugar Total"],
+      fiber: +d["Data.Fiber"],
+      sodium: +d["Data.Major Minerals.Sodium"],
+      calcium: +d["Data.Major Minerals.Calcium"],
+      vitaminC: +d["Data.Vitamins.Vitamin C"],
+      vitaminB12: +d["Data.Vitamins.Vitamin B12"],
+      iron: +d["Data.Major Minerals.Iron"],
+      saturatedFat: +d["Data.Fat.Saturated Fat"],
+      water: +d["Data.Water"],
       servingSize: 100, // Assuming the data is in 100g serving
     }));
-    
-    window.addEventListener("scroll", handleScroll);
-  });
-
-  onDestroy(() => {
-    window.removeEventListener("scroll", handleScroll);
   });
 
   // Handle the search functionality
   function handleSearch() {
     if (searchQuery.trim() === "") {
       searchResults = [];
+      currentPage = 0;
     } else {
       searchResults = foodData.filter((food) =>
         food.name.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 5);
+      );
+      currentPage = 0; // Reset to first page on new search
+    }
+  }
+
+  // Navigate to the previous page
+  function previousPage() {
+    if (currentPage > 0) {
+      currentPage--;
+    }
+  }
+
+  // Navigate to the next page
+  function nextPage() {
+    if (currentPage < Math.ceil(searchResults.length / resultsPerPage) - 1) {
+      currentPage++;
     }
   }
 
@@ -62,6 +99,15 @@
       protein: food.protein * parsedQuantity / food.servingSize,
       fats: food.fats * parsedQuantity / food.servingSize,
       carbohydrates: food.carbohydrates * parsedQuantity / food.servingSize,
+      sugar: food.sugar * parsedQuantity / food.servingSize,
+      fiber: food.fiber * parsedQuantity / food.servingSize,
+      sodium: food.sodium * parsedQuantity / food.servingSize,
+      calcium: food.calcium * parsedQuantity / food.servingSize,
+      vitaminC: food.vitaminC * parsedQuantity / food.servingSize,
+      vitaminB12: food.vitaminB12 * parsedQuantity / food.servingSize,
+      iron: food.iron * parsedQuantity / food.servingSize,
+      saturatedFat: food.saturatedFat * parsedQuantity / food.servingSize,
+      water: food.water * parsedQuantity / food.servingSize,
     };
 
     // Update total nutrients
@@ -69,6 +115,15 @@
     totalNutrients.protein += nutrients.protein;
     totalNutrients.fats += nutrients.fats;
     totalNutrients.carbohydrates += nutrients.carbohydrates;
+    totalNutrients.sugar += nutrients.sugar;
+    totalNutrients.fiber += nutrients.fiber;
+    totalNutrients.sodium += nutrients.sodium;
+    totalNutrients.calcium += nutrients.calcium;
+    totalNutrients.vitaminC += nutrients.vitaminC;
+    totalNutrients.vitaminB12 += nutrients.vitaminB12;
+    totalNutrients.iron += nutrients.iron;
+    totalNutrients.saturatedFat += nutrients.saturatedFat;
+    totalNutrients.water += nutrients.water;
 
     // Add selected food with quantity and nutrients
     selectedIngredients.update(arr => [...arr, { name: food.name, quantity: parsedQuantity, nutrients }]);
@@ -80,24 +135,6 @@
     // Dispatch event to notify NutrientChart of ingredient update
     dispatch("ingredientsUpdated");
   }
-
-  // Handle scrolling
-  function handleScroll() {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-      // At the bottom of the page
-      console.log("Bottom of the page reached");
-    }
-  }
-
-  // Add event listener for input event on the search input field
-  function addInputEventListener() {
-    const searchInput = document.querySelector('input[type="text"]');
-    searchInput.addEventListener('input', handleSearch);
-  }
-
-  // Call the function to add the event listener when the component is mounted
-  onMount(addInputEventListener);
-
 </script>
 
 <div class="search-container">
@@ -108,18 +145,26 @@
     on:input={handleSearch}
   />
   <ul>
-    {#each searchResults as result}
+    {#each searchResults.slice(currentPage * resultsPerPage, (currentPage + 1) * resultsPerPage) as result}
       <li on:click={() => selectFood(result)}>
         <strong>{result.name}</strong><br />
         <span>Calories: {result.calories}, Protein: {result.protein}g, Fats: {result.fats}g, Carbohydrates: {result.carbohydrates}g</span>
       </li>
     {/each}
   </ul>
+  <div class="pagination">
+    {#if currentPage > 0}
+      <button on:click={previousPage}>Previous</button>
+    {/if}
+    {#if currentPage < Math.ceil(searchResults.length / resultsPerPage) - 1}
+      <button on:click={nextPage}>Next</button>
+    {/if}
+  </div>
   {#if $selectedIngredients.length > 0}
     <NutrientChart
       nutrients={totalNutrients}
       ingredients={$selectedIngredients}
-      colorScale={$colorScale}
+      colorScale={colorScale}
       on:ingredientsUpdated={() => {}}
     />
   {/if}
@@ -127,9 +172,13 @@
 
 <style>
   .search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 20px;
-    max-width: 600px;
-    margin: auto;
+    width: 100%;
+    max-width: 1000px; /* Ensure enough width */
+    background-color: #f5f5f5; /* Set background to light gray */
   }
   input[type="text"] {
     width: 100%;
@@ -142,10 +191,25 @@
   ul {
     list-style: none;
     padding: 0;
+    width: 100%;
   }
   li {
     padding: 10px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
+    width: 100%;
+    text-align: left;
+  }
+  .pagination {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .pagination button {
+    padding: 5px 10px;
+    font-size: 14px;
   }
 </style>
+
+
