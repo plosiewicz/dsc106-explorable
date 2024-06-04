@@ -49,6 +49,8 @@
       iron: +d["Data.Major Minerals.Iron"],
       saturatedFat: +d["Data.Fat.Saturated Fat"],
       water: +d["Data.Water"],
+      householdWeightDescription: d["Data.Household Weights.1st Household Weight Description"], // Include household weight description
+      householdWeightGrams: +d["Data.Household Weights.1st Household Weight (g)"], // Include household weight in grams
       servingSize: 100, // Assuming the data is in 100g serving
     }));
   });
@@ -82,8 +84,8 @@
 
   // Select a food item to display its nutrients
   function selectFood(food) {
-    // Ask for quantity
-    const quantity = prompt(`Enter quantity (in grams) of ${food.name}:`);
+    // Prompt user for quantity using household weight description
+    const quantity = prompt(`Enter quantity (in terms of ${food.householdWeightDescription}):`);
     if (quantity === null || quantity.trim() === "") return; // If quantity is not provided or canceled, do nothing
 
     // Convert quantity to a number
@@ -93,21 +95,21 @@
       return; // If quantity is not a valid number or less than or equal to zero, show an alert and do nothing
     }
 
-    // Calculate nutrients considering the quantity
+    // Calculate nutrients considering the quantity and household weight
     const nutrients = {
-      calories: food.calories * parsedQuantity / food.servingSize,
-      protein: food.protein * parsedQuantity / food.servingSize,
-      fats: food.fats * parsedQuantity / food.servingSize,
-      carbohydrates: food.carbohydrates * parsedQuantity / food.servingSize,
-      sugar: food.sugar * parsedQuantity / food.servingSize,
-      fiber: food.fiber * parsedQuantity / food.servingSize,
-      sodium: food.sodium * parsedQuantity / food.servingSize,
-      calcium: food.calcium * parsedQuantity / food.servingSize,
-      vitaminC: food.vitaminC * parsedQuantity / food.servingSize,
-      vitaminB12: food.vitaminB12 * parsedQuantity / food.servingSize,
-      iron: food.iron * parsedQuantity / food.servingSize,
-      saturatedFat: food.saturatedFat * parsedQuantity / food.servingSize,
-      water: food.water * parsedQuantity / food.servingSize,
+      calories: food.calories * parsedQuantity,
+      protein: food.protein * parsedQuantity,
+      fats: food.fats * parsedQuantity,
+      carbohydrates: food.carbohydrates * parsedQuantity,
+      sugar: food.sugar * parsedQuantity,
+      fiber: food.fiber * parsedQuantity,
+      sodium: food.sodium * parsedQuantity,
+      calcium: food.calcium * parsedQuantity,
+      vitaminC: food.vitaminC * parsedQuantity,
+      vitaminB12: food.vitaminB12 * parsedQuantity,
+      iron: food.iron * parsedQuantity,
+      saturatedFat: food.saturatedFat * parsedQuantity,
+      water: food.water * parsedQuantity,
     };
 
     // Update total nutrients
@@ -126,7 +128,7 @@
     totalNutrients.water += nutrients.water;
 
     // Add selected food with quantity and nutrients
-    selectedIngredients.update(arr => [...arr, { name: food.name, quantity: parsedQuantity, nutrients }]);
+    selectedIngredients.update(arr => [...arr, { name: food.name, quantity: parsedQuantity, householdWeightDescription: food.householdWeightDescription, nutrients }]);
 
     // Clear the search bar and results
     searchQuery = "";
@@ -211,5 +213,3 @@
     font-size: 14px;
   }
 </style>
-
-

@@ -1,3 +1,4 @@
+User
 <script>
     import { onMount, afterUpdate } from 'svelte';
     import * as d3 from 'd3';
@@ -24,6 +25,8 @@
       water: 'Water'
     };
   
+    let flashingIntervals = [];
+  
     onMount(() => {
       drawChart();
     });
@@ -36,6 +39,10 @@
   
     function drawChart() {
       if (!chartContainer || !Object.keys(nutrients).length) return;
+  
+      // Clear previous intervals
+      flashingIntervals.forEach(interval => clearInterval(interval));
+      flashingIntervals = [];
   
       d3.select(chartContainer).selectAll('*').remove();
   
@@ -78,19 +85,16 @@
           return {
             name: ingredient.name,
             nutrient: nutrient,
-            value: (ingredient.nutrients[nutrient] * (ingredient.quantity / 100)) / dailyValues[nutrient] * 100
+            value: (ingredient.nutrients[nutrient] / dailyValues[nutrient]) * 100
           };
         });
       });
   
       Object.keys(accumulatedNutrients).forEach((key, i) => {
         let cumulativeValue = 0;
+  
         accumulatedNutrients[key].forEach((data, index) => {
           cumulativeValue += data.value;
-  
-          if (cumulativeValue > 100) {
-            console.log(`Nutrient ${key} exceeded 100%: ${cumulativeValue}%`);
-          }
   
           const rect = svg.append('rect')
             .attr('x', x(key))
@@ -98,13 +102,11 @@
             .attr('y', y(cumulativeValue))
             .attr('height', y(0) - y(data.value))
             .attr('fill', colorScale(data.name))
-            .attr('class', cumulativeValue > 100 ? 'flashing' : '')
             .style('opacity', 1)
             .on('mouseover', function () {
               const tooltipText = `${data.name}:\n` +
-                `  - Quantity: ${ingredients[index].quantity}g\n` +
-                `  - ${key}: ${data.value.toFixed(2)}g\n` +
-                `  - ${key} (% Daily Value): ${((data.value / 100) * dailyValues[key]).toFixed(2)}%\n`;
+                `  - Quantity: (${ingredients[index].householdWeightDescription}) x ${ingredients[index].quantity}\n` +
+                `  - ${nutrientNames[key]}: ${data.value.toFixed(2)}%\n`;
   
               const tooltipLines = tooltipText.split('\n');
   
@@ -123,11 +125,11 @@
             });
   
           if (cumulativeValue > 100) {
-            // Trigger flashing effect using JavaScript
-            setInterval(() => {
+            const interval = setInterval(() => {
               const currentFill = rect.attr('fill');
               rect.attr('fill', currentFill === 'red' ? colorScale(data.name) : 'red');
             }, 500);
+            flashingIntervals.push(interval);
           }
         });
       });
@@ -144,15 +146,15 @@
       legend.append('h4').text('Selected Ingredients');
       const ingredientList = legend.append('ul');
   
-      ingredients.forEach(ingredient => {
+      ingredients.forEach((ingredient, index) => {
         const listItem = ingredientList.append('li');
         listItem.style('color', colorScale(ingredient.name))
-          .text(`${ingredient.name} (${ingredient.quantity}g)`);
+          .text(`${ingredient.name} (${ingredient.householdWeightDescription}) x ${ingredient.quantity}`);
         listItem.append('input')
           .attr('type', 'number')
           .attr('min', '0')
           .attr('value', ingredient.quantity)
-          .on('input', (event) => adjustQuantity(ingredient, event.target.value));
+          .on('input', (event) => adjustQuantity(index, event.target.value));
         listItem.append('button')
           .text('−')
           .style('color', 'red')
@@ -160,21 +162,39 @@
           .style('border', 'none')
           .style('cursor', 'pointer')
           .style('margin-left', '5px')
-          .on('click', () => removeIngredient(ingredient));
+          .on('click', () => removeIngredient(index));
       });
     }
   
-    function adjustQuantity(ingredient, newQuantity) {
-      const index = ingredients.findIndex(item => item.name === ingredient.name);
+    function adjustQuantity(index, newQuantity) {
+      const ingredient = ingredients[index];
+      const oldQuantity = ingredient.quantity;
+      const parsedQuantity = parseFloat(newQuantity);
   
-      if (index !== -1) {
-        ingredients[index].quantity = newQuantity;
+      if (!isNaN(parsedQuantity) && parsedQuantity > 0) {
+        ingredients[index].quantity = parsedQuantity;
+  
+        // Recalculate the nutrients for the updated quantity
+        ingredients[index].nutrients.calories = (ingredients[index].nutrients.calories / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.protein = (ingredients[index].nutrients.protein / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.fats = (ingredients[index].nutrients.fats / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.carbohydrates = (ingredients[index].nutrients.carbohydrates / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.sugar = (ingredients[index].nutrients.sugar / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.fiber = (ingredients[index].nutrients.fiber / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.sodium = (ingredients[index].nutrients.sodium / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.calcium = (ingredients[index].nutrients.calcium / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.vitaminC = (ingredients[index].nutrients.vitaminC / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.vitaminB12 = (ingredients[index].nutrients.vitaminB12 / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.iron = (ingredients[index].nutrients.iron / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.saturatedFat = (ingredients[index].nutrients.saturatedFat / oldQuantity) * parsedQuantity;
+        ingredients[index].nutrients.water = (ingredients[index].nutrients.water / oldQuantity) * parsedQuantity;
+  
         drawChart();
       }
     }
   
-    function removeIngredient(ingredientToRemove) {
-      ingredients = ingredients.filter(ingredient => ingredient !== ingredientToRemove);
+    function removeIngredient(index) {
+      ingredients.splice(index, 1);
       drawChart();
     }
   
