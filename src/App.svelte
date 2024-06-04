@@ -12,6 +12,7 @@
   import FoodSearch from "./Components/FoodSearch.svelte";
   import Heatmap from './Components/Heatmap.svelte';
   import KeyNutrientsBubbles from "./Components/KeyNutrientsBubbles.svelte";
+  import NutrientsPieChart from "./Components/NutrientsPieChart.svelte";
 </script>
 
 <main>
@@ -20,6 +21,7 @@
   <Title />
   <Intro />
   <KeyNutrientsBubbles />
+  <NutrientsPieChart />
   <ScrollCenter />
   <Heatmap />
   <ScrollSide />
