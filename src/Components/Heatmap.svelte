@@ -33,7 +33,7 @@
   }
 
   function drawHeatmap() {
-    const margin = { top: 80, right: 30, bottom: 60, left: 100 }; // Increased top margin and left margin
+    const margin = { top: 20, right: 30, bottom: 60, left: 100 }; // Reduced top margin
     const width = 800 - margin.left - margin.right;
     const height = 600 - margin.top - margin.bottom;
 
@@ -176,6 +176,14 @@
           .style('text-anchor', 'middle')
           .text(nutrientMapping[nutrient]);
 
+      // Add x-axis label
+      svg.append('text')
+          .attr('class', 'x-axis-label')
+          .attr('x', width / 2)
+          .attr('y', height + margin.bottom - 10)
+          .style('text-anchor', 'middle')
+          .text(category);
+
       // Add horizontal line element
       const horizontalLine = svg.append('line')
           .attr('class', 'horizontal-line')
@@ -251,19 +259,53 @@
 </script>
 
 <style>
-  #tooltip {position: absolute;
-      text-align: center;
-      width: 120px;
-      height: auto;
-      padding: 5px;
-      font: 12px sans-serif;
-      background: lightsteelblue;
-      border: 0px;
-      border-radius: 8px;
-      pointer-events: none;
+  body {
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    background-color: #f2f2f2; /* Grey background */
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 1000px;
+  }
+
+  h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0; /* Adjusted margin to reduce gap */
+  }
+
+  h3 {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    font-weight: normal;
+    margin: 5px 0; /* Adjusted margin to reduce gap */
+  }
+
+  #tooltip {
+    position: absolute;
+    text-align: center;
+    width: 120px;
+    height: auto;
+    padding: 5px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
   }
 </style>
 
-<div id="heatmap"></div>
-<div id="bar-chart"></div>
-<div id="tooltip" style="opacity: 0;"></div>
+<div class="container">
+  <h2>Got Nutrients? Are Popular Food-Groups Packing or Lacking?</h2>
+  <h3>Click on a square for a closer look</h3>
+  <div id="heatmap"></div>
+  <div id="bar-chart"></div>
+  <div id="tooltip" style="opacity: 0;"></div>
+</div>

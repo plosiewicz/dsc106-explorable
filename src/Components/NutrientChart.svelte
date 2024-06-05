@@ -1,14 +1,14 @@
 <script>
     import { onMount, afterUpdate } from 'svelte';
     import * as d3 from 'd3';
-  
+    
     export let nutrients = {};
     export let ingredients = [];
     export let colorScale;
-  
+    
     let chartContainer;
     let infoText = ''; // This will store the information to display
-  
+    
     const nutrientNames = {
       calories: 'Calories',
       protein: 'Protein',
@@ -24,32 +24,32 @@
       saturatedFat: 'Sat. Fat',
       water: 'Water'
     };
-  
+    
     let flashingIntervals = [];
-  
+    
     onMount(() => {
       drawChart();
     });
-  
+    
     $: drawChart();
-  
+    
     afterUpdate(() => {
       drawChart();
     });
-  
+    
     function drawChart() {
       if (!chartContainer || !Object.keys(nutrients).length) return;
-  
+    
       // Clear previous intervals
       flashingIntervals.forEach(interval => clearInterval(interval));
       flashingIntervals = [];
-  
+    
       d3.select(chartContainer).selectAll('*').remove();
-  
+    
       const margin = { top: 40, right: 40, bottom: 60, left: 50 },
         width = 1000 - margin.left - margin.right,
         height = 700 - margin.top - margin.bottom;
-  
+    
       const svg = d3.select(chartContainer)
         .append('svg')
         .attr('width', width + margin.left + margin.right)
@@ -58,27 +58,27 @@
         .style('margin', 'auto')
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
-  
+    
       const x = d3.scaleBand()
         .range([0, width])
         .domain(Object.keys(nutrientNames))
         .padding(0.2);
-  
+    
       svg.append('g')
         .attr('transform', `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d => nutrientNames[d]))
         .selectAll('text')
         .style('font-size', '16px');
-  
+    
       const y = d3.scaleLinear()
         .domain([0, 200])
         .range([height, 0]);
-  
+    
       svg.append('g')
         .call(d3.axisLeft(y).tickFormat(d => `${d}%`))
         .selectAll('text')
         .style('font-size', '16px');
-  
+    
       let accumulatedNutrients = {};
       Object.keys(nutrientNames).forEach(nutrient => {
         accumulatedNutrients[nutrient] = ingredients.map(ingredient => {
@@ -89,13 +89,13 @@
           };
         });
       });
-  
+    
       Object.keys(accumulatedNutrients).forEach((key, i) => {
         let cumulativeValue = 0;
-  
+    
         accumulatedNutrients[key].forEach((data, index) => {
           cumulativeValue += data.value;
-  
+    
           const rect = svg.append('rect')
             .attr('x', x(key))
             .attr('width', x.bandwidth())
@@ -243,9 +243,9 @@
             const tooltipText = `${data.name}:\n` +
               `  - Quantity: (${ingredients[index].householdWeightDescription}) x ${ingredients[index].quantity}\n` +
               `  - ${nutrientNames[key]}: ${data.value.toFixed(2)}%\n`;
-
+  
             const tooltipLines = tooltipText.split('\n');
-
+  
             tooltipLines.forEach((line, index) => {
               svg.append('text')
                 .attr('class', 'tooltip')
@@ -259,7 +259,7 @@
           .on('mouseout', function () {
             svg.selectAll('.tooltip').remove();
           });
-
+  
         if (cumulativeValue > 100) {
           const interval = setInterval(() => {
             const currentFill = rect.attr('fill');
@@ -269,7 +269,7 @@
         }
       });
     });
-
+  
     const legend = d3.select(chartContainer)
       .append('div')
       .attr('class', 'legend')
@@ -278,10 +278,10 @@
       .style('background-color', '#f4f2f9')
       .style('border', '1px solid #ddd')
       .style('padding', '25px');
-
+  
     legend.append('h4').text('Selected Ingredients');
     const ingredientList = legend.append('ul');
-
+  
     ingredients.forEach((ingredient, index) => {
       const listItem = ingredientList.append('li');
       listItem.style('color', colorScale(ingredient.name))
@@ -301,15 +301,15 @@
         .on('click', () => removeIngredient(index));
     });
   }
-
+  
   function adjustQuantity(index, newQuantity) {
     const ingredient = ingredients[index];
     const oldQuantity = ingredient.quantity;
     const parsedQuantity = parseFloat(newQuantity);
-
+  
     if (!isNaN(parsedQuantity) && parsedQuantity > 0) {
       ingredients[index].quantity = parsedQuantity;
-
+  
       // Recalculate the nutrients for the updated quantity
       ingredients[index].nutrients.calories = (ingredients[index].nutrients.calories / oldQuantity) * parsedQuantity;
       ingredients[index].nutrients.protein = (ingredients[index].nutrients.protein / oldQuantity) * parsedQuantity;
@@ -324,16 +324,16 @@
       ingredients[index].nutrients.iron = (ingredients[index].nutrients.iron / oldQuantity) * parsedQuantity;
       ingredients[index].nutrients.saturatedFat = (ingredients[index].nutrients.saturatedFat / oldQuantity) * parsedQuantity;
       ingredients[index].nutrients.water = (ingredients[index].nutrients.water / oldQuantity) * parsedQuantity;
-
+  
       drawChart();
     }
   }
-
+  
   function removeIngredient(index) {
     ingredients.splice(index, 1);
     drawChart();
   }
-
+  
   const dailyValues = {
     calories: 2000,
     protein: 50,
@@ -349,60 +349,74 @@
     saturatedFat: 20,
     water: 3700
   };
-
+  
   function updateInfoText(text) {
-    document.querySelector('.info-text').innerText = text;
+    d3.select('.info-text').text(text);
   }
-</script>
-
-<style>
-  .chart-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin: auto;
-    padding: 20px;
-    width: 100%;
-    max-width: 1200px;
-    background-color: #f5f5f5;
-  }
-
-  .bar:hover {
-    fill: #4e8fd3;
-  }
-
-  .legend {
-    font-size: 14px;
-  }
-
-  .legend ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  .legend li {
-    display: flex;
-    align-items: center;
-  }
-
-  .legend input {
-    margin-left: 10px;
-  }
-
-  .legend button {
-    margin-left: 5px;
-    cursor: pointer;
-  }
-
-  .info-text {
-    margin-top: 20px;
-    font-size: 16px;
-    background-color: #fff;
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
-</style>
-
-<div class="chart-container" bind:this={chartContainer}></div>
-<div class="info-text"></div>
+  </script>
+  
+  <style>
+    .chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin: auto;
+      padding: 20px;
+      width: 100%;
+      max-width: 1200px;
+      background-color: #f5f5f5;
+    }
+  
+    .bar:hover {
+      fill: #4e8fd3;
+    }
+  
+    .legend {
+      font-size: 14px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #f4f2f9;
+      border: 1px solid #ddd;
+      padding: 25px;
+    }
+  
+    .legend ul {
+      list-style-type: none;
+      padding: 0;
+    }
+  
+    .legend li {
+      display: flex;
+      align-items: center;
+    }
+  
+    .legend input {
+      margin-left: 10px;
+    }
+  
+    .legend button {
+      margin-left: 5px;
+      cursor: pointer;
+    }
+  
+    .info-text {
+      position: absolute;
+      top: 200px;
+      right: 40px;
+      max-width: 300px;
+      font-size: 14px;
+      background-color: #fff;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+  </style>
+  
+  <div class="chart-container" bind:this={chartContainer}>
+    <h2>Putting it all Together: Let's Look at YOUR Diet</h2>
+    <h3>Click on a Nutrient Bar for Insights</h3>
+  </div>
+  <div class="info-text"></div>
+  
+  

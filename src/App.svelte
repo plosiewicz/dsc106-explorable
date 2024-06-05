@@ -26,11 +26,9 @@
   <ScrollCenter />
   <NutrientsPieChart />
   <Heatmap />
-  <ScrollSide />
   <div class="component food-search">
     <FoodSearch />
   </div>
-  <LineChart />
   <Conclusion />
   <Resources />
 </main>

@@ -7,29 +7,29 @@
     `<h1 class='step-title'>Macronutrients</h1>
     <br><br>
     <p>
-      "Macronutrients are the essential nutrients that the body requires in significant amounts 
-        to generate energy and sustain key physiological functions. These include carbohydrates, proteins, 
-        and fats. Carbohydrates, present in foods like grains, fruits, and vegetables, serve as the body's 
-        primary energy source. Proteins, composed of amino acids, are critical for tissue growth, repair, 
-        and maintenance, and can be found in meats, dairy, legumes, and nuts. Fats, though often misunderstood, 
-        are vital for vitamin absorption, organ protection, and long-term energy storage, and are sourced 
-        from oils, butter, avocados, and fatty fish. A well-rounded diet incorporating these macronutrients 
-        in balanced proportions is crucial for maintaining energy, supporting metabolism, and ensuring overall 
-        health. Consuming a variety of foods that provide all three macronutrients is essential for meeting 
-        the body's nutritional requirements."
+      Macronutrients are the essential nutrients that the body requires in significant amounts 
+      to generate energy and sustain key physiological functions. These include carbohydrates, proteins, 
+      and fats. Carbohydrates, present in foods like grains, fruits, and vegetables, serve as the body's 
+      primary energy source. Proteins, composed of amino acids, are critical for tissue growth, repair, 
+      and maintenance, and can be found in meats, dairy, legumes, and nuts. Fats, though often misunderstood, 
+      are vital for vitamin absorption, organ protection, and long-term energy storage, and are sourced 
+      from oils, butter, avocados, and fatty fish. A well-rounded diet incorporating these macronutrients 
+      in balanced proportions is crucial for maintaining energy, supporting metabolism, and ensuring overall 
+      health. Consuming a variety of foods that provide all three macronutrients is essential for meeting 
+      the body's nutritional requirements."
     </p>`,
     `<h1 class='step-title'>Micronutrients</h1>
     <p>
       Micronutrients are vital vitamins and minerals that the body requires in 
-        minute quantities to maintain optimal health and physiological function. 
-        Unlike macronutrients like carbohydrates, proteins, and fats, which supply energy, 
-        micronutrients are crucial for supporting the immune system, facilitating normal growth 
-        and development, and ensuring overall well-being. Key micronutrients include vitamins 
-        such as A, C, D, E, K, and the B-complex group, along with minerals like iron, zinc, iodine, and calcium. 
-        Insufficient intake of these nutrients can lead to various health issues, including anemia, 
-        scurvy, and bone diseases, underscoring their essential role in a balanced diet. 
-        A diverse diet rich in fruits, vegetables, grains, and animal products typically 
-        provides the necessary levels of these critical nutrients.
+      minute quantities to maintain optimal health and physiological function. 
+      Unlike macronutrients like carbohydrates, proteins, and fats, which supply energy, 
+      micronutrients are crucial for supporting the immune system, facilitating normal growth 
+      and development, and ensuring overall well-being. Key micronutrients include vitamins 
+      such as A, C, D, E, K, and the B-complex group, along with minerals like iron, zinc, iodine, and calcium. 
+      Insufficient intake of these nutrients can lead to various health issues, including anemia, 
+      scurvy, and bone diseases, underscoring their essential role in a balanced diet. 
+      A diverse diet rich in fruits, vegetables, grains, and animal products typically 
+      provides the necessary levels of these critical nutrients.
     </p>`,
   ];
 
@@ -50,14 +50,14 @@
   // Trigger events on scroll
   $: {
     if (typeof value !== "undefined") {
-        const eventFunction = target2event[value];
-        if (typeof eventFunction === "function") {
-            eventFunction();
-        } else {
-            console.error(`No function found for value: ${value}`);
-        }
+      const eventFunction = target2event[value];
+      if (typeof eventFunction === "function") {
+        eventFunction();
+      } else {
+        console.error(`No function found for value: ${value}`);
+      }
     }
-}
+  }
 </script>
 
 <h2 class="body-header">What are major components of a good diet?</h2>
@@ -79,16 +79,15 @@
     </div>
     <div class="charts-container">
       <div class="chart-one">
-        <img id="chart3" src="src/assets/macro1.jpeg" alt="Chart 3 Image" />
+        <img id="chart3" src="src/assets/images/macro1.jpeg" alt="Chart 3 Image" />
       </div>
       <div class="chart-two">
-        <img id="chart4" src="src/assets/macro2.jpeg" alt="Chart 4 Image" />
+        <img id="chart4" src="src/assets/images/macro2.jpeg" alt="Chart 4 Image" />
       </div>
     </div>
   </div>
   <!-- End scroll -->
   <br /><br />
-  <p class="body-text">And that's the end of our scrolly.</p>
 </section>
 
 <style>

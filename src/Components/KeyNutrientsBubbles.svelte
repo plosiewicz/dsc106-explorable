@@ -89,7 +89,7 @@
   });
 
   function drawBubbleChart() {
-    const width = 1000;
+    const width = 600;
     const height = 500;
     const margin = { top: 20, right: 20, bottom: 50, left: 20 };
 
@@ -155,7 +155,7 @@
         d3.select(event.currentTarget).select('circle').style('fill', '#8f7c75');
       });
 
-      bubblesGroup.append('circle')
+    bubblesGroup.append('circle')
       .attr('class', d => selectedNutrient && d.name === selectedNutrient.name ? 'bubble selected-bubble' : 'bubble') // Updated class based on selection
       .attr('r', d => radiusScale(d.value))
       .style('fill', d => colorScale(d.importance))
@@ -175,24 +175,20 @@
   }
 </script>
 
-<section>
-  <h2><strong>Let's Explore Some Key Nutrients:</strong></h2>
+<section class="main-container">
   <div id="bubble-chart"></div>
+  {#if selectedNutrient}
+    <section class="description-box">
+      <h3><strong>{selectedNutrient.name}</strong></h3>
+      <p>{selectedNutrient.description}</p>
+    </section>
+  {/if}
 </section>
-
-{#if selectedNutrient}
-  <section class="description-box">
-    <h3><strong>{selectedNutrient.name}</strong></h3>
-    <p>{selectedNutrient.description}</p>
-  </section>
-{/if}
 
 <style>
   .bubble {
     cursor: pointer;
-    transition:
-      fill 0.3s,
-      r 0.3s;
+    transition: fill 0.3s, r 0.3s;
   }
 
   .bubble-label {
@@ -213,9 +209,9 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 20px 0;
+    margin: 20px;
     padding: 20px;
-    max-width: 500px;
+    max-width: 400px;
     animation: fadeIn 0.5s ease-in-out;
   }
 
@@ -236,5 +232,17 @@
 
   .description-box p {
     margin-bottom: 0;
+  }
+
+  .main-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 20px;
+  }
+
+  #bubble-chart {
+    flex: 1;
+    min-width: 0;
   }
 </style>

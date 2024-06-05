@@ -140,6 +140,7 @@
 </script>
 
 <div class="search-container">
+  <h2>Putting it all Together: Let's Look at YOUR Diet</h2>
   <input
     type="text"
     placeholder="Search for food..."
@@ -181,6 +182,13 @@
     width: 100%;
     max-width: 1000px; /* Ensure enough width */
     background-color: #f5f5f5; /* Set background to light gray */
+  }
+  h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px; /* Adjusted margin to reduce gap */
   }
   input[type="text"] {
     width: 100%;
