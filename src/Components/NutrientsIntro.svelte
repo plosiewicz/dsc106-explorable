@@ -39,7 +39,7 @@
 </style>
 
 <section>
-  <h2>What even is a diet??</h2>
+  <h2>What even is a diet?</h2>
   <p class="body-text">
     A lot of the time when you hear the word "diet", you think 
     of eating less food in order to lose weight. While that might be
@@ -47,7 +47,7 @@
     help different people achieve different goals whether that be weight 
     loss or being more environmentally conscious. The key is finding what diet works
     best for you and your needs. Below, we have linked four diets: cardiac, 
-    ketp, paleo, and a plant based diet. Along with those diets, we've roughly calculated the 
+    keto, paleo, and a plant based diet. Along with those diets, we've roughly calculated the 
     macrnutrients you'd obrtain from doing on day of eating this particular diet. 
     This serves as a rough guidline for when you're creating your own diet down below.
   </p>
