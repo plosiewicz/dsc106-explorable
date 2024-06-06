@@ -35,12 +35,10 @@
 
   const target2event = {
     0: () => {
-      select("#chart3").attr("src", "src/assets/images/macro1.jpeg");
-      select("#chart4").attr("src", "src/assets/images/macro2.jpeg");
+      select("#chart3").attr("src", "src/assets/macro3.jpeg");
     },
     1: () => {
-      select("#chart3").attr("src", "src/assets/images/micro1.jpeg");
-      select("#chart4").attr("src", "src/assets/images/micro2.jpeg");
+      select("#chart3").attr("src", "src/assets/micro4.jpeg");
     },
   };
 
@@ -81,9 +79,6 @@
       <div class="chart-one">
         <img id="chart3" src="src/assets/images/macro1.jpeg" alt="Chart 3 Image" />
       </div>
-      <div class="chart-two">
-        <img id="chart4" src="src/assets/images/macro2.jpeg" alt="Chart 4 Image" />
-      </div>
     </div>
   </div>
   <!-- End scroll -->
@@ -91,16 +86,17 @@
 </section>
 
 <style>
-  #chart3,
-  #chart4 {
+  #chart3
+  {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
   }
-  .chart-one,
-  .chart-two {
+  .chart-one
+  {
     width: 100%;
     height: 100%;
+    object-fit: cover;
   }
   .charts-container {
     position: sticky;
@@ -113,6 +109,7 @@
     grid-template-rows: repeat(2, 1fr);
     height: 85vh;
     border: 3px solid black;
+    grid-template-rows: repeat(1, 1fr);
   }
   .section-container {
     margin-top: 1em;
