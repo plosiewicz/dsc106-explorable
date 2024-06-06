@@ -43,12 +43,12 @@
   <p class="body-text">
     A lot of the time when you hear the word "diet", you think 
     of eating less food in order to lose weight. While that might be
-    truem diets go beyond simply eating less foods to lose weight. Different diets
+    true, diets go beyond simply eating less foods to lose weight. Different diets
     help different people achieve different goals whether that be weight 
-    loss or being more environmentally conscious. The key is finding what diet works
+    loss or being more environmentally conscious. The key lies in finding what diet works
     best for you and your needs. Below, we have linked four diets: cardiac, 
     keto, paleo, and a plant based diet. Along with those diets, we've roughly calculated the 
-    macrnutrients you'd obrtain from doing on day of eating this particular diet. 
+    macronutrients you'd obtain from doing on day of eating this particular diet. 
     This serves as a rough guidline for when you're creating your own diet down below.
   </p>
 </section>

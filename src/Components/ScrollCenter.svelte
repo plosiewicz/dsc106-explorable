@@ -16,7 +16,7 @@
       from oils, butter, avocados, and fatty fish. A well-rounded diet incorporating these macronutrients 
       in balanced proportions is crucial for maintaining energy, supporting metabolism, and ensuring overall 
       health. Consuming a variety of foods that provide all three macronutrients is essential for meeting 
-      the body's nutritional requirements."
+      the body's nutritional requirements.
     </p>`,
     `<h1 class='step-title'>Micronutrients</h1>
     <p>
