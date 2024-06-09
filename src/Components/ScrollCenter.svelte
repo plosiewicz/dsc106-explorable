@@ -35,10 +35,10 @@
 
   const target2event = {
     0: () => {
-      select("#chart3").attr("src", "/data/micro3.jpeg"); // Use relative path
+      select("#chart3").attr("src", "/dsc106-explorable/assets/micro3.jpeg"); // Use relative path
     },
     1: () => {
-      select("#chart3").attr("src", "/data/micro4.jpeg"); // Use relative path
+      select("#chart3").attr("src", "/dsc106-explorable/assets/micro4.jpeg"); // Use relative path
     },
   };
 
@@ -77,7 +77,7 @@
     </div>
     <div class="charts-container">
       <div class="chart-one">
-        <img id="chart3" src="/data/micro3.jpeg" alt="Chart 3 Image" /> <!-- Use relative path -->
+        <img id="chart3" src="/dsc106-explorable/assets/micro3.jpeg" alt="Chart 3 Image" /> <!-- Use relative path -->
       </div>
     </div>
   </div>
