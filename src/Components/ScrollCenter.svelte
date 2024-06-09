@@ -77,7 +77,7 @@
     </div>
     <div class="charts-container">
       <div class="chart-one">
-        <img id="chart3" src="dsc106-explorable/data/micro3.jpeg" alt="Chart 3 Image" />
+        <img id="chart3" src="/data/micro3.jpeg" alt="Chart 3 Image" />
       </div>
     </div>
   </div>
