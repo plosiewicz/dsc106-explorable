@@ -1,223 +1,176 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
-  import { writable } from 'svelte/store';
-  import * as d3 from "d3"; // Import d3 library
-  import NutrientChart from "./NutrientChart.svelte";
+  import Scrolly from "./Scrolly.svelte";
+  import { select } from "d3-selection";
 
-  let foodData = [];
-  let searchQuery = "";
-  let searchResults = [];
-  let currentPage = 0; // Current page of search results
-  const resultsPerPage = 5; // Number of results to show per page
+  // Paragraph text for scrolly
+  $: steps = [
+    `<h1 class='step-title'>Macronutrients</h1>
+    <br><br>
+    <p>
+      Macronutrients are the essential nutrients that the body requires in significant amounts 
+      to generate energy and sustain key physiological functions. These include carbohydrates, proteins, 
+      and fats. Carbohydrates, present in foods like grains, fruits, and vegetables, serve as the body's 
+      primary energy source. Proteins, composed of amino acids, are critical for tissue growth, repair, 
+      and maintenance, and can be found in meats, dairy, legumes, and nuts. Fats, though often misunderstood, 
+      are vital for vitamin absorption, organ protection, and long-term energy storage, and are sourced 
+      from oils, butter, avocados, and fatty fish. A well-rounded diet incorporating these macronutrients 
+      in balanced proportions is crucial for maintaining energy, supporting metabolism, and ensuring overall 
+      health. Consuming a variety of foods that provide all three macronutrients is essential for meeting 
+      the body's nutritional requirements.
+    </p>`,
+    `<h1 class='step-title'>Micronutrients</h1>
+    <p>
+      Micronutrients are vital vitamins and minerals that the body requires in 
+      minute quantities to maintain optimal health and physiological function. 
+      Unlike macronutrients like carbohydrates, proteins, and fats, which supply energy, 
+      micronutrients are crucial for supporting the immune system, facilitating normal growth 
+      and development, and ensuring overall well-being. Key micronutrients include vitamins 
+      such as A, C, D, E, K, and the B-complex group, along with minerals like iron, zinc, iodine, and calcium. 
+      Insufficient intake of these nutrients can lead to various health issues, including anemia, 
+      scurvy, and bone diseases, underscoring their essential role in a balanced diet. 
+      A diverse diet rich in fruits, vegetables, grains, and animal products typically 
+      provides the necessary levels of these critical nutrients.
+    </p>`,
+  ];
 
-  let totalNutrients = {
-    calories: 0,
-    protein: 0,
-    fats: 0,
-    carbohydrates: 0,
-    sugar: 0,
-    fiber: 0,
-    sodium: 0,
-    calcium: 0,
-    vitaminC: 0,
-    vitaminB12: 0,
-    iron: 0,
-    saturatedFat: 0,
-    water: 0
+  const target2event = {
+    0: () => {
+      select("#chart3").attr("src", "/data/micro3.jpeg"); // Update to correct path
+    },
+    1: () => {
+      select("#chart3").attr("src", "/data/micro4.jpeg"); // Update to correct path
+    },
   };
 
-  let selectedIngredients = writable([]); // Initialize as writable store
-  let colorScale = d3.scaleOrdinal(d3.schemeCategory10); // Color scale for ingredients
+  // Scroll iterator
+  let value;
 
-  const dispatch = createEventDispatcher(); // Create dispatcher
-
-  onMount(async () => {
-    const response = await fetch("/dsc106-explorable/data/food.csv");
-    const data = await response.text();
-    foodData = d3.csvParse(data, (d) => ({
-      name: d.Description,
-      calories: +d["Data.Kilocalories"],
-      protein: +d["Data.Protein"],
-      fats: +d["Data.Fat.Total Lipid"],
-      carbohydrates: +d["Data.Carbohydrate"],
-      sugar: +d["Data.Sugar Total"],
-      fiber: +d["Data.Fiber"],
-      sodium: +d["Data.Major Minerals.Sodium"],
-      calcium: +d["Data.Major Minerals.Calcium"],
-      vitaminC: +d["Data.Vitamins.Vitamin C"],
-      vitaminB12: +d["Data.Vitamins.Vitamin B12"],
-      iron: +d["Data.Major Minerals.Iron"],
-      saturatedFat: +d["Data.Fat.Saturated Fat"],
-      water: +d["Data.Water"],
-      householdWeightDescription: d["Data.Household Weights.1st Household Weight Description"], // Include household weight description
-      householdWeightGrams: +d["Data.Household Weights.1st Household Weight (g)"], // Include household weight in grams
-      servingSize: 100, // Assuming the data is in 100g serving
-    }));
-  });
-
-  // Handle the search functionality
-  function handleSearch() {
-    if (searchQuery.trim() === "") {
-      searchResults = [];
-      currentPage = 0;
-    } else {
-      searchResults = foodData.filter((food) =>
-        food.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      currentPage = 0; // Reset to first page on new search
+  // Trigger events on scroll
+  $: {
+    if (typeof value !== "undefined") {
+      const eventFunction = target2event[value];
+      if (typeof eventFunction === "function") {
+        eventFunction();
+      } else {
+        console.error(`No function found for value: ${value}`);
+      }
     }
-  }
-
-  // Navigate to the previous page
-  function previousPage() {
-    if (currentPage > 0) {
-      currentPage--;
-    }
-  }
-
-  // Navigate to the next page
-  function nextPage() {
-    if (currentPage < Math.ceil(searchResults.length / resultsPerPage) - 1) {
-      currentPage++;
-    }
-  }
-
-  // Select a food item to display its nutrients
-  function selectFood(food) {
-    // Prompt user for quantity using household weight description
-    const quantity = prompt(`Enter quantity (in terms of ${food.householdWeightDescription}):`);
-    if (quantity === null || quantity.trim() === "") return; // If quantity is not provided or canceled, do nothing
-
-    // Convert quantity to a number
-    const parsedQuantity = parseFloat(quantity);
-    if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
-      alert("Please enter a valid quantity.");
-      return; // If quantity is not a valid number or less than or equal to zero, show an alert and do nothing
-    }
-
-    // Calculate nutrients considering the quantity and household weight
-    const nutrients = {
-      calories: food.calories * parsedQuantity,
-      protein: food.protein * parsedQuantity,
-      fats: food.fats * parsedQuantity,
-      carbohydrates: food.carbohydrates * parsedQuantity,
-      sugar: food.sugar * parsedQuantity,
-      fiber: food.fiber * parsedQuantity,
-      sodium: food.sodium * parsedQuantity,
-      calcium: food.calcium * parsedQuantity,
-      vitaminC: food.vitaminC * parsedQuantity,
-      vitaminB12: food.vitaminB12 * parsedQuantity,
-      iron: food.iron * parsedQuantity,
-      saturatedFat: food.saturatedFat * parsedQuantity,
-      water: food.water * parsedQuantity,
-    };
-
-    // Update total nutrients
-    totalNutrients.calories += nutrients.calories;
-    totalNutrients.protein += nutrients.protein;
-    totalNutrients.fats += nutrients.fats;
-    totalNutrients.carbohydrates += nutrients.carbohydrates;
-    totalNutrients.sugar += nutrients.sugar;
-    totalNutrients.fiber += nutrients.fiber;
-    totalNutrients.sodium += nutrients.sodium;
-    totalNutrients.calcium += nutrients.calcium;
-    totalNutrients.vitaminC += nutrients.vitaminC;
-    totalNutrients.vitaminB12 += nutrients.vitaminB12;
-    totalNutrients.iron += nutrients.iron;
-    totalNutrients.saturatedFat += nutrients.saturatedFat;
-    totalNutrients.water += nutrients.water;
-
-    // Add selected food with quantity and nutrients
-    selectedIngredients.update(arr => [...arr, { name: food.name, quantity: parsedQuantity, householdWeightDescription: food.householdWeightDescription, nutrients }]);
-
-    // Clear the search bar and results
-    searchQuery = "";
-    searchResults = [];
-
-    // Dispatch event to notify NutrientChart of ingredient update
-    dispatch("ingredientsUpdated");
   }
 </script>
 
-<div class="search-container">
-  <h2>Putting it all Together: Let's Look at YOUR Diet</h2>
-  <input
-    type="text"
-    placeholder="Search for food..."
-    bind:value={searchQuery}
-    on:input={handleSearch}
-  />
-  <ul>
-    {#each searchResults.slice(currentPage * resultsPerPage, (currentPage + 1) * resultsPerPage) as result}
-      <li on:click={() => selectFood(result)}>
-        <strong>{result.name}</strong><br />
-        <span>Calories: {result.calories}, Protein: {result.protein}g, Fats: {result.fats}g, Carbohydrates: {result.carbohydrates}g</span>
-      </li>
-    {/each}
-  </ul>
-  <div class="pagination">
-    {#if currentPage > 0}
-      <button on:click={previousPage}>Previous</button>
-    {/if}
-    {#if currentPage < Math.ceil(searchResults.length / resultsPerPage) - 1}
-      <button on:click={nextPage}>Next</button>
-    {/if}
+<h2 class="body-header">What are major components of a good diet?</h2>
+<p class="body-text">
+  Here's a breakdown of your main dietary needs: Macronutrients and Micronutrients
+</p>
+<section>
+  <!-- Scroll container -->
+  <div class="section-container">
+    <div class="steps-container">
+      <Scrolly bind:value>
+        {#each steps as text, i}
+          <div class="step" class:active={value === i}>
+            <div class="step-content">{@html text}</div>
+          </div>
+        {/each}
+        <div class="spacer" />
+      </Scrolly>
+    </div>
+    <div class="charts-container">
+      <div class="chart-one">
+        <img id="chart3" src="/data/micro3.jpeg" alt="Chart 3 Image" /> <!-- Update to correct path -->
+      </div>
+    </div>
   </div>
-  {#if $selectedIngredients.length > 0}
-    <NutrientChart
-      nutrients={totalNutrients}
-      ingredients={$selectedIngredients}
-      colorScale={colorScale}
-      on:ingredientsUpdated={() => {}}
-    />
-  {/if}
-</div>
+  <!-- End scroll -->
+  <br /><br />
+</section>
 
 <style>
-  .search-container {
+  #chart3 {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .chart-one {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .charts-container {
+    position: sticky;
+    top: 10%;
+    display: grid;
+    width: 50%;
+    grid-template-columns: 100%;
+    grid-row-gap: 2rem;
+    grid-column-gap: 0rem;
+    grid-template-rows: repeat(2, 1fr);
+    height: 85vh;
+    border: 3px solid black;
+    grid-template-rows: repeat(1, 1fr);
+  }
+  .section-container {
+    margin-top: 1em;
+    text-align: center;
+    transition: background 100ms;
+    display: flex;
+  }
+  .step {
+    height: 110vh;
+    display: flex;
+    place-items: center;
+    justify-content: center;
+  }
+  .step-content {
+    font-size: 18px;
+    background: var(--bg);
+    color: #ccc;
+    border-radius: 1px;
+    padding: 0.5rem 1rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    width: 100%;
-    max-width: 1000px; /* Ensure enough width */
-    background-color: #f5f5f5; /* Set background to light gray */
-  }
-  h2 {
-    text-align: center;
-    color: #333;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px; /* Adjusted margin to reduce gap */
-  }
-  input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  ul {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-  }
-  li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
-    width: 100%;
+    justify-content: center;
+    transition: background 500ms ease;
     text-align: left;
+    width: 75%;
+    margin: auto;
+    max-width: 500px;
+    font-family: var(--font-main);
+    line-height: 1.3;
+    border: 5px solid var(--default);
   }
-  .pagination {
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
+  .step.active .step-content {
+    background: #f1f3f3ee;
+    color: var(--squid-ink);
   }
-  .pagination button {
-    padding: 5px 10px;
-    font-size: 14px;
+  .steps-container {
+    height: 100%;
+  }
+  .steps-container {
+    flex: 1 1 40%;
+    z-index: 10;
+  }
+  .section-container {
+    flex-direction: column-reverse;
+  }
+  .steps-container {
+    pointer-events: none;
+  }
+  .charts-container {
+    top: 7.5%;
+    width: 75%;
+    margin: auto;
+  }
+  .step {
+    height: 130vh;
+  }
+  .step-content {
+    width: 65%;
+    max-width: 768px;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .spacer {
+    height: 100vh;
   }
 </style>
