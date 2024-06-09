@@ -88,12 +88,12 @@
 <style>
   #chart3 {
     width: 100%;
-    height: 100%;
-    object-fit: contain; /* Ensure the image fits within the container while maintaining aspect ratio */
+    height: auto; /* Maintain aspect ratio */
   }
   .chart-one {
     width: 100%;
-    height: 100%;
+    height: auto; /* Adjust height to content */
+    max-height: 80vh; /* Limit max height to avoid overflow */
     display: flex; /* Flex container to center the image */
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
@@ -101,21 +101,20 @@
   .charts-container {
     position: sticky;
     top: 10%;
-    display: grid;
+    display: flex; /* Use flex display to adjust size */
+    justify-content: center;
+    align-items: center;
     width: 50%;
-    grid-template-columns: 100%;
-    grid-row-gap: 2rem;
-    grid-column-gap: 0rem;
-    grid-template-rows: repeat(2, 1fr);
-    height: 85vh;
+    height: 85vh; /* Set height to match viewport height */
     border: 3px solid black;
-    grid-template-rows: repeat(1, 1fr);
+    margin: auto;
   }
   .section-container {
     margin-top: 1em;
     text-align: center;
     transition: background 100ms;
     display: flex;
+    flex-direction: column-reverse;
   }
   .step {
     height: 110vh;
@@ -147,21 +146,9 @@
   }
   .steps-container {
     height: 100%;
-  }
-  .steps-container {
     flex: 1 1 40%;
     z-index: 10;
-  }
-  .section-container {
-    flex-direction: column-reverse;
-  }
-  .steps-container {
     pointer-events: none;
-  }
-  .charts-container {
-    top: 7.5%;
-    width: 75%;
-    margin: auto;
   }
   .step {
     height: 130vh;
