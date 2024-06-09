@@ -35,10 +35,10 @@
 
   const target2event = {
     0: () => {
-      select("#chart3").attr("src", "dsc106-explorable/data/micro3.jpeg");
+      select("#chart3").attr("src", "/data/micro3.jpeg");
     },
     1: () => {
-      select("#chart3").attr("src", "dsc106-explorable/data/micro4.jpeg");
+      select("#chart3").attr("src", "/data/micro4.jpeg");
     },
   };
 
