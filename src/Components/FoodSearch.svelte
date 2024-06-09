@@ -35,10 +35,10 @@
 
   const target2event = {
     0: () => {
-      select("#chart3").attr("src", "/data/micro3.jpeg"); // Update to correct path
+      select("#chart3").attr("src", "/data/micro3.jpeg");
     },
     1: () => {
-      select("#chart3").attr("src", "/data/micro4.jpeg"); // Update to correct path
+      select("#chart3").attr("src", "/data/micro4.jpeg");
     },
   };
 
@@ -77,7 +77,7 @@
     </div>
     <div class="charts-container">
       <div class="chart-one">
-        <img id="chart3" src="/data/micro3.jpeg" alt="Chart 3 Image" /> <!-- Update to correct path -->
+        <img id="chart3" src="/data/micro3.jpeg" alt="Chart 3 Image" />
       </div>
     </div>
   </div>
@@ -89,12 +89,14 @@
   #chart3 {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Ensure the image fits within the container while maintaining aspect ratio */
   }
   .chart-one {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    display: flex; /* Flex container to center the image */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
   }
   .charts-container {
     position: sticky;
